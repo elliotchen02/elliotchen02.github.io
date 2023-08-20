@@ -1,11 +1,23 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-
 layout: home
 title: home
 ---
 
-Hello! I'm Elliot and welcome to my little personal website. Take a peak! I post recently completed projects, short blurbs about some travels of mine, and random thoughts. If I'm feeling adventurous, I'll post some of my creative writing . . .
+## About
+
+I am an undergraduate student studying computer science and artificial intelligence at MIT. My interests include computer vision, reinforcement learning, computational chemistry, and green technology. I value working on projects for social, cultural, and environmental good. 
+
+In my free time, I enjoy swimming, lifting, hiking, playing poker, and a good movie. I write about some of these things on this site too. 
+
+If you'd like to contact me, I'm most reachable by email:  <echen02@mit.edu>
+
+
+
+
+
+
+
+
+
 
 

@@ -13,8 +13,8 @@
   */
  body {
    font: 400 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
-   color: #111;
-   background-color: #fdfdfd;
+   color: white;
+   background-color: black;
    -webkit-text-size-adjust: 100%;
    -webkit-font-feature-settings: "kern" 1;
    -moz-font-feature-settings: "kern" 1;
@@ -162,6 +162,16 @@
    }
  }
  
+ .header-wrapper {
+   max-width: -webkit-calc(1700px - (80px * 2));
+   max-width: calc(1700px - (80px * 2));
+   margin-right: auto;
+   margin-left: auto;
+   padding-right: 30px;
+   padding-left: 30px;
+ }
+
+
  /**
   * Clearfix
   */
@@ -178,7 +188,7 @@
    width: 16px;
    height: 16px;
    display: inline-block;
-   fill: #828282;
+   fill: white;
    padding-right: 5px;
    vertical-align: text-top;
  }
@@ -246,7 +256,7 @@
    display: none;
  }
  .site-nav .page-link {
-   color: #111;
+   color: white;
    line-height: 1.5;
  }
  .site-nav .page-link:not(:last-child) {
@@ -257,7 +267,7 @@
      position: absolute;
      top: 9px;
      right: 15px;
-     background-color: #fdfdfd;
+     background-color: gray;
      border: 1px solid #e8e8e8;
      border-radius: 5px;
      text-align: right;
@@ -644,6 +654,44 @@
  }
  .highlight .il {
    color: #099;
+ }
+ 
+ /*# Introduction panel and particles */
+ *{
+   margin: 0;
+   padding: 0;
+ }
+ #particles-js{
+   background-color: black;
+   height: 80vh;
+ }
+
+ .headshot{
+   padding-top: 175px;
+   padding-bottom: 30px;
+   padding-left: 100px
+}
+
+  .profile-pic {
+   max-width: 40vw;
+   max-height: 40vh;
+   border-radius: 50%;
+   border: 3px solid white
+  }
+
+ .introduction {
+  position: absolute;
+  color: white;
+  display: block;
+  margin: 0 auto;
+  padding-top: 18vh;
+  padding-left: 38vw;
+ }
+
+ .introduction h1 {
+  margin-top: 40px;
+  text-align: center;
+  font-size: 50px;
  }
  
  /*# sourceMappingURL=main.css.map */
