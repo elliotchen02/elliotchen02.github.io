@@ -30,7 +30,6 @@ social-links:
   - github_username:  elliotchen02
   - linkedin_username: elliotchen02
 
-
 # Build settings
 plugins:
   - jekyll-feed
