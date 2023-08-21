@@ -666,34 +666,38 @@
    height: 80vh;
  }
 
-  .profile-pic {
-   max-width: 40vw;
-   max-height: 40vh;
-   border-radius: 50%;
-   border: 3px solid white
-  }
-
  .introduction {
   position: absolute;
+  top: 12vh;
   color: white;
-  display: block;
-  margin: 0 auto;
-  padding-top: 18vh;
-  padding-left: 38vmax;
+  width: 50vw;
+  margin-left: 23vw;
+  display: flex;
+  align-items:center;
+  justify-content: center;
+  height: 93vh;
  }
 
- .introduction h1 {
+.inner-introduction {
+  width: 50vw;
+  height: 90vh;
+  padding-top: 8vh;
+}
+
+.profile-pic {
+  border-radius: 50%;
+  border: 3px solid white;
+  display: block;
+  margin: auto;
+  max-height: 45%;
+  max-width: 45%;
+ }
+
+ .inner-introduction h1 {
   margin-top: 5vh;
   text-align: center;
   letter-spacing: 2px;
   font-size: 8vmin;
-}
- @media screen and (max-device-width: 800px) {
-  .introduction h1 {
-   margin-top: 5vh;
-   text-align: center;
-   font-size: 20vmin;
- }
 }
  
  /*# sourceMappingURL=main.css.map */
