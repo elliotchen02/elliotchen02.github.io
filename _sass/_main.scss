@@ -665,8 +665,16 @@
  }
  #particles-js{
    background-color: black;
-   height: 80vh;
+   height: auto;
+   max-height: 75vh;
+   min-height: 40vh;
  }
+
+ .particles-js-canvas-el {
+  max-height: inherit;
+  min-height: inherit
+ }
+
 
  .introduction {
   position: absolute;
@@ -691,8 +699,8 @@
   border: 3px solid white;
   display: block;
   margin: auto;
-  max-height: 45%;
-  max-width: 45%;
+  max-height: 35vh;
+  max-width: 21vw;
  }
 
  .inner-introduction h1 {
