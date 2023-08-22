@@ -1,3 +1,3 @@
 # elliotchen02.github.io
 
-Working on building a personal site. whoop. 
+My personal web portfolio. Click [here](https://elliotchen02.github.io/) to visit. 
