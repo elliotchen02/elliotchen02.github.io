@@ -4,7 +4,7 @@ title: Home
 ---
 
 
-I am an undergraduate student studying computer science at MIT. My interests include machine learning, quantitative finance, full-stack software development, and green technology. I value working on projects for social, cultural, and environmental good. 
+I am a student pursuing both a B.S. and M.Eng. in computer science and engineering at MIT. My interests include machine learning, quantitative finance, full-stack software development, and green technology. I value working on projects for social, cultural, and environmental good. 
 
 In my free time, I enjoy swimming, lifting, hiking, playing poker, and a good movie. I write about some of these things on this site too. 
 
