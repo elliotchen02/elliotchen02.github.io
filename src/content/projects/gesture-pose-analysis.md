@@ -1,0 +1,52 @@
+---
+title: Gesture and Pose Analysis for Parkinson's Disease
+date: 2023-08-20
+description: Building gesture-detection and feature-extraction pipelines with MediaPipe and XGBoost to help diagnose early-onset Parkinson's Disease from video, as an ML researcher at National Taiwan University.
+github: https://github.com/elliotchen02/PD-analysis
+featured: true
+---
+
+The code for this project may be found on my github. Click [here](https://github.com/elliotchen02/PD-analysis) to check it out.
+
+I'm currently in Taipei, Taiwan working as a machine learning researcher at the National Taiwan University. My summer project was to help diagnose and evaluate patients with early-onset Parkinson's Disease using machine learning. Before starting this project, I knew very little about Parkinson's Disease, neurological diseases, or anything about the human brain in general. However, one of the great things about ML / deep learning is its aplicability to numerous scientific fields. With ML, I can quickly learn about a project's specificities, fill knowledge gaps, and get to work.
+
+#### The Problem
+
+According to Wikipedia, [Parkinson's Disease](https://en.wikipedia.org/wiki/Parkinson's_disease) is a degenerative disorder of the neurological system. Diagnosis of early-onset PD can be difficult and begins by evaluation of a patient's medical history and motor symptomns. Multiple symptomns of PD are similar to those of other diseases. Stroke, certain medications, and toxins may cause "secondary Parkinsonism." Faster progression rates, early cognitive dysfunction or postural instability, minimal tremor, or symmetry at onset may indicate another disease rather than PD itself.
+
+Detection of early-onset PD is based on diagnostic criteria which analyzes a patient's motor skills. Ridigity, tremors, and asymmetry of movements are the most recognized systems. Currently, experts believe roughly 81% of PD diagnoses are accurate based on autopsies.
+
+The goal of the project was to build a ML model to help diagnose early-onset PD based on video training data of patients. Patients were recorded walking in straight paths, performing unique hand movements, and reading short paragraphs.
+
+#### Building the Model
+
+The majority of my focus was on hand gesture detection. Patients were recorded performing two unique hand movements. The first, rapidly touching the index and thumb fingers together. Physicians are looking for rapid fatigue or difficulty moving. The second, rapidly twisting the hand with figers outstretched. Again, physicians are looking for fatigue or some movement impediment.
+
+Video examples are shown below. For privacy reasons, these are my hands. Ignore the fact those gifs make my hands looks massive.
+
+![Touching Fingers gif](/assets/pics/pd_ntu/touching_fingers.gif)
+
+![Rotating Hands gif](/assets/pics/pd_ntu/rotating_hand.gif)
+
+There was a lack of video data given to the lab by local hospitals and doctors. We only had ~850 videos to work with. Due to the lack of training data, simple ML techniques would suffice to try and make a model.
+
+The first obstacle was gesture detections for the hands. Luckily, the smart guys at Google already developed MediaPipe, a ML library with gesture models, pose detection, among many others. Using MediaPipe's gesture recognizer, fitting video data and extracting landmarks for the hands was relatively straightforward. There was one major problem with the twisting hand videos. Due to the speed of the turning, and the lack of slow-motion video, MediaPipe struggled to identify the landmarks. To combat this, I used an image sharpening kernel to sharpen straight edges within each frame. This helped the model identify more landmarks, but it still struggled. Room to improve here. I tried using a technique known as HSR filtering, which was a failure.
+
+Landmarks for hands were framed as shown in the photo below.
+
+![hand landmarker pic](/assets/pics/pd_ntu/frame_260.jpg)
+
+Each hand was given 21 landmarks. Things brings us to the next step: feature extraction. I decided to extract a few features, most notably the:
+1. distance between index and thumb over time (in the case of the index-thumb movement)
+2. rotation speed and period (in the case of the twisting hand)
+
+The lab had acquired roughly 10,000 video samples from hospitals in the area. Given the relatively small data sample size, cross-validation was used to split the data into training and validation sets (each video was labeled with the patient either having or not having PD).
+
+At first, I did not think that the samller training dataset size could support a deep-learning model effectively.
+Thus, I used XGBoost, a powerful decision tree model, to make predictions accordingly. Given the features above, the model classified PD vs. No-PD with roughly 84% accuracy. Not bad.
+
+There are a few improvements and things to explore that I wish I had time for (I spent too much time exploring Taiwan!):
+1. I wanted to create a shallow neural net to perform classification given the features. Or maybe a stronger video CNN that could find the features on its own.
+2. Test the classification model on a true testing dataset whose distribution was significantly different than the training/validation sets. Would be interesting to see how robust my model is.
+
+Overall, it was a good experience working at the National Taiwan University. As someone who only recently began learning about AI, ML, and deep learning, I certainly learned a lot.

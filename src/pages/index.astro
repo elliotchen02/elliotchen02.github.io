@@ -1,0 +1,81 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ParticlesHero from '../components/ParticlesHero.astro';
+import BlackjackGame from '../components/BlackjackGame.astro';
+import { SITE } from '../consts';
+---
+
+<BaseLayout>
+  <ParticlesHero />
+
+  <section class="section">
+    <div class="container about">
+      <p class="eyebrow">About</p>
+      <p class="about-text">
+        I'm currently living in San Francisco and working as a software engineer at Applied Intuition. 
+        I focus on cloud infrastructure, and I'm helping build Applied's
+        flagship autonomy tools for the governemnt.  
+        I graduated from MIT with a B.S. in computer science and engineering. 
+      </p>
+      <p class="about-text">
+        In my free time, I enjoy swimming, lifting, hiking, playing poker, and a good movie. 
+        I try to keep the creative side of my brain in shape too - you might find me playing the piano,
+        writing short stories in the coffee shops around FiDi, or doing a little game development.
+      </p>
+      <p class="about-text">
+        If you'd like to contact me, I'm most reachable by email at
+        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+    </div>
+  </section>
+
+  <section class="section arcade">
+    <div class="container">
+      <div class="arcade-head">
+        <p class="arcade-sub">
+          I like games. And (occasionally) gambling. Get a dopamine hit while you're here.
+        </p>
+      </div>
+
+      <BlackjackGame />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about {
+    max-width: var(--reading-width);
+  }
+
+  .about h2 {
+    margin-top: 0.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .about-text + .about-text {
+    margin-top: 1rem;
+  }
+
+  .about-text {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  .arcade {
+    border-top: 1px solid var(--border);
+  }
+
+  .arcade-head {
+    margin-bottom: 2rem;
+  }
+
+  .arcade-head h2 {
+    margin-top: 0.4rem;
+  }
+
+  .arcade-sub {
+    margin-top: 0.6rem;
+    color: var(--text-muted);
+    max-width: var(--reading-width);
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<BaseLayout title={project.data.title} description={project.data.description}>
+  <article class="section">
+    <div class="container">
+      <a href="/projects/" class="back-link">&larr; All projects</a>
+      <header class="post-head">
+        <h1>{project.data.title}</h1>
+        <div class="post-meta">
+          <FormattedDate date={project.data.date} />
+          {
+            project.data.github && (
+              <a href={project.data.github} target="_blank" rel="noopener">
+                GitHub
+              </a>
+            )
+          }
+          {
+            project.data.pdf && (
+              <a href={project.data.pdf} target="_blank" rel="noopener">
+                Paper (PDF)
+              </a>
+            )
+          }
+        </div>
+      </header>
+
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .back-link {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .post-head {
+    max-width: var(--reading-width);
+    margin-inline: auto;
+    margin-block: 1.5rem 2.5rem;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+  }
+</style>

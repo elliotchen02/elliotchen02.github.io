@@ -1,0 +1,912 @@
+---
+// Retro arcade Blackjack. All game logic runs client-side in the script below.
+---
+
+<div class="bj-machine">
+  <div class="bj-topper">
+    <span class="bj-topper-star">★</span>
+    <span class="bj-topper-name">
+      <span class="bj-topper-line1">WILD&nbsp;WEST</span>
+      <span class="bj-topper-line2">BLACKJACK&nbsp;·&nbsp;21</span>
+    </span>
+    <span class="bj-topper-star">★</span>
+  </div>
+
+  <div class="bj-cab-row">
+    <div class="bj-side bj-side-left" aria-hidden="true">
+      <span class="bj-side-icon">♠</span>
+      <span class="bj-side-text">SALOON</span>
+      <span class="bj-side-icon">★</span>
+    </div>
+
+    <div class="cabinet" id="bj-game">
+      <div class="cabinet-screen">
+        <div class="scanlines" aria-hidden="true"></div>
+
+        <div class="marquee">
+          <span class="marquee-text">♠ WILD WEST 21 ♠ SADDLE UP, PARTNER ♠ BEAT THE HOUSE ♠ DEAL 'EM ♠ WILD WEST 21 ♠ SADDLE UP, PARTNER ♠ BEAT THE HOUSE ♠ DEAL 'EM ♠</span>
+        </div>
+
+        <div class="hud">
+          <span class="hud-item">GOLD <b data-credits>100</b></span>
+          <span class="hud-item bet-ctrl">
+            BET
+            <button class="bet-btn" data-action="bet-down" aria-label="Lower bet">&minus;</button>
+            <b data-bet>10</b>
+            <button class="bet-btn" data-action="bet-up" aria-label="Raise bet">+</button>
+          </span>
+        </div>
+
+        <div class="table">
+          <div class="hand-zone">
+            <div class="hand-label"> DEALER <span data-dealer-score></span></div>
+            <div class="cards" data-dealer-cards></div>
+          </div>
+
+          <div class="hand-zone">
+            <div class="hand-label">YOU <span data-player-score></span></div>
+            <div class="cards" data-player-cards></div>
+          </div>
+        </div>
+
+        <div class="message" data-message>ANTE UP, PARTNER</div>
+
+        <div class="controls">
+          <button class="arcade-btn deal" data-action="deal">DEAL</button>
+          <button class="arcade-btn hit" data-action="hit" disabled>HIT</button>
+          <button class="arcade-btn stand" data-action="stand" disabled>STAND</button>
+          <button class="arcade-btn double" data-action="double" disabled>DOUBLE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bj-side bj-side-right" aria-hidden="true">
+      <span class="bj-side-icon">★</span>
+      <span class="bj-side-text">HIGH NOON</span>
+      <span class="bj-side-icon">♣</span>
+    </div>
+  </div>
+
+  <div class="bj-deck" aria-hidden="true">
+    <span class="bj-coin-slot"></span>
+    <span class="bj-deck-text">★ HIGH NOON SALOON ★ EST. 1880 ★</span>
+    <span class="bj-coin-slot"></span>
+  </div>
+</div>
+
+<style>
+  .bj-machine {
+    --wood-darkest: #1a0f08;
+    --wood-dark: #3a2414;
+    --wood: #5a3a20;
+    --wood-light: #7c5430;
+    --brass: #c8902f;
+    --brass-light: #f1c75a;
+    --gold: #f3d178;
+    --saloon-red: #b23440;
+    --saloon-red-light: #e06472;
+    --parchment: #ecdcb8;
+    --felt: #163a26;
+
+    font-family: 'Press Start 2P', var(--font-mono);
+    max-width: 560px;
+    margin-inline: auto;
+    border-radius: 18px 18px 12px 12px;
+    padding: clamp(0.5rem, 1.4vw, 0.85rem);
+    background:
+      repeating-linear-gradient(
+        90deg,
+        rgba(0, 0, 0, 0.16) 0 3px,
+        rgba(255, 255, 255, 0.04) 3px 7px,
+        rgba(0, 0, 0, 0) 7px 16px
+      ),
+      linear-gradient(180deg, var(--wood-light) 0%, var(--wood) 35%, var(--wood-dark) 100%);
+    border: 4px solid var(--wood-darkest);
+    box-shadow:
+      inset 0 2px 0 rgba(255, 255, 255, 0.12),
+      inset 0 0 60px rgba(0, 0, 0, 0.55),
+      0 18px 40px rgba(0, 0, 0, 0.5);
+  }
+
+  /* Top "lightbox" marquee sign of the cabinet. */
+  .bj-topper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.5rem, 1.6vw, 1.1rem);
+    margin-bottom: clamp(0.5rem, 1.4vw, 0.8rem);
+    padding: clamp(0.45rem, 1.4vw, 0.8rem);
+    border-radius: 10px;
+    background:
+      radial-gradient(circle at 50% 0%, #2a1810 0%, #160c06 80%);
+    border: 3px solid var(--brass);
+    box-shadow:
+      inset 0 0 22px rgba(0, 0, 0, 0.8),
+      0 0 16px rgba(200, 144, 47, 0.35);
+  }
+
+  .bj-topper-star {
+    color: var(--brass-light);
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    text-shadow: 0 0 10px rgba(241, 199, 90, 0.8);
+  }
+
+  .bj-topper-name {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    text-align: center;
+  }
+
+  .bj-topper-line1 {
+    font-size: clamp(0.8rem, 2.6vw, 1.2rem);
+    letter-spacing: 2px;
+    color: var(--gold);
+    text-shadow:
+      0 2px 0 #5a3208,
+      0 0 14px rgba(243, 209, 120, 0.7);
+  }
+
+  .bj-topper-line2 {
+    font-size: clamp(0.45rem, 1.4vw, 0.7rem);
+    letter-spacing: 1px;
+    color: var(--saloon-red-light);
+    text-shadow: 0 0 10px rgba(224, 100, 114, 0.6);
+  }
+
+  .bj-cab-row {
+    display: flex;
+    align-items: stretch;
+    gap: clamp(0.4rem, 1.2vw, 0.9rem);
+  }
+
+  /* Decorative side art panels. */
+  .bj-side {
+    flex: 0 0 auto;
+    width: clamp(34px, 6vw, 70px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: clamp(0.8rem, 2vw, 1.4rem) 0;
+    border-radius: 10px;
+    background:
+      repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.22) 0 12px,
+        rgba(255, 255, 255, 0.05) 12px 24px
+      ),
+      linear-gradient(90deg, var(--wood-dark), var(--wood-light), var(--wood-dark));
+    border: 2px solid var(--wood-darkest);
+    box-shadow: inset 0 0 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .bj-side-icon {
+    color: var(--brass-light);
+    font-size: clamp(0.9rem, 2.4vw, 1.5rem);
+    text-shadow: 0 0 8px rgba(241, 199, 90, 0.6);
+  }
+
+  .bj-side-text {
+    writing-mode: vertical-rl;
+    text-orientation: upright;
+    letter-spacing: 2px;
+    font-size: clamp(0.5rem, 1.4vw, 0.8rem);
+    color: var(--parchment);
+    opacity: 0.85;
+  }
+
+  /* Bottom control deck / coin shelf. */
+  .bj-deck {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(0.6rem, 2vw, 1.2rem);
+    margin-top: clamp(0.45rem, 1.2vw, 0.8rem);
+    padding: clamp(0.4rem, 1vw, 0.65rem);
+    border-radius: 10px;
+    background: linear-gradient(180deg, var(--wood-light), var(--wood-dark));
+    border: 2px solid var(--wood-darkest);
+    box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.55);
+  }
+
+  .bj-deck-text {
+    font-size: clamp(0.45rem, 1.4vw, 0.7rem);
+    letter-spacing: 1px;
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(243, 209, 120, 0.45);
+  }
+
+  .bj-coin-slot {
+    width: clamp(22px, 4vw, 34px);
+    height: 9px;
+    border-radius: 5px;
+    background: #0c0905;
+    border: 2px solid var(--brass);
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.9);
+  }
+
+  .cabinet {
+    flex: 1 1 auto;
+    min-width: 0;
+    border: 3px solid var(--wood-darkest);
+    border-radius: 14px;
+    padding: clamp(0.6rem, 1.6vw, 1.1rem);
+    background: linear-gradient(180deg, #241a12 0%, #0e0905 100%);
+    box-shadow:
+      inset 0 0 0 2px rgba(200, 144, 47, 0.25),
+      inset 0 0 30px rgba(0, 0, 0, 0.85);
+  }
+
+  .cabinet-screen {
+    position: relative;
+    border-radius: 10px;
+    padding: clamp(0.65rem, 1.7vw, 1rem);
+    background:
+      radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.06), rgba(0, 0, 0, 0) 60%),
+      radial-gradient(circle at 50% 50%, var(--felt) 0%, #0e2719 100%);
+    overflow: hidden;
+  }
+
+  .scanlines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0) 0px,
+      rgba(0, 0, 0, 0) 2px,
+      rgba(0, 0, 0, 0.25) 3px,
+      rgba(0, 0, 0, 0.25) 4px
+    );
+    mix-blend-mode: multiply;
+    z-index: 5;
+  }
+
+  .marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    border-bottom: 2px dashed rgba(200, 144, 47, 0.5);
+    padding-bottom: 0.45rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .marquee-text {
+    display: inline-block;
+    font-size: 0.7rem;
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(243, 209, 120, 0.7);
+    animation: scroll-marquee 24s linear infinite;
+  }
+
+  @keyframes scroll-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .hud {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: var(--parchment);
+    margin-bottom: 0.8rem;
+  }
+
+  .hud b {
+    color: var(--gold);
+    text-shadow: 0 0 8px rgba(243, 209, 120, 0.6);
+  }
+
+  .bet-ctrl {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .bet-ctrl b {
+    min-width: 1.6em;
+    text-align: center;
+  }
+
+  .bet-btn {
+    font-family: 'Press Start 2P', var(--font-mono);
+    font-size: 0.6rem;
+    width: 1.6rem;
+    height: 1.6rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    border: 2px solid var(--brass);
+    background: linear-gradient(180deg, #2a1a10, #160c06);
+    color: var(--brass-light);
+    cursor: pointer;
+    transition: box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .bet-btn:not(:disabled):hover {
+    box-shadow: 0 0 10px rgba(241, 199, 90, 0.6);
+    background: linear-gradient(180deg, #3a2616, #1f1108);
+  }
+
+  .bet-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .table {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(0.4rem, 1.4vw, 0.75rem);
+    min-height: clamp(120px, 20vw, 158px);
+  }
+
+  .hand-label {
+    font-size: 0.65rem;
+    color: var(--saloon-red-light);
+    text-shadow: 0 0 8px rgba(224, 100, 114, 0.6);
+    margin-bottom: 0.4rem;
+    letter-spacing: 1px;
+  }
+
+  .hand-label span {
+    color: var(--parchment);
+  }
+
+  .cards {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: clamp(0.35rem, 1vw, 0.6rem);
+    min-height: clamp(58px, 10.5vw, 80px);
+  }
+
+  .message {
+    margin-top: 0.8rem;
+    text-align: center;
+    font-size: 0.72rem;
+    min-height: 1.2rem;
+    color: var(--gold);
+    text-shadow: 0 0 10px rgba(243, 209, 120, 0.6);
+  }
+
+  .message.win { color: #7bd88f; text-shadow: 0 0 12px rgba(123, 216, 143, 0.7); }
+  .message.lose { color: #e06472; text-shadow: 0 0 12px rgba(224, 100, 114, 0.7); }
+  .message.blink { animation: blink 0.7s steps(2, start) infinite; }
+
+  @keyframes blink {
+    to { visibility: hidden; }
+  }
+
+  .controls {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: 0.9rem;
+    flex-wrap: wrap;
+  }
+
+  .arcade-btn {
+    font-family: 'Press Start 2P', var(--font-mono);
+    font-size: 0.62rem;
+    padding: 0.55rem 0.8rem;
+    border-radius: 8px;
+    border: 2px solid currentColor;
+    background: linear-gradient(180deg, #2a1a10, #160c06);
+    cursor: pointer;
+    transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+  }
+
+  .arcade-btn.deal { color: var(--gold); }
+  .arcade-btn.hit { color: var(--brass-light); }
+  .arcade-btn.stand { color: var(--saloon-red-light); }
+  .arcade-btn.double { color: #7bd88f; }
+
+  .arcade-btn:not(:disabled):hover {
+    box-shadow: 0 0 14px currentColor;
+    background: linear-gradient(180deg, #3a2616, #1f1108);
+  }
+
+  .arcade-btn:not(:disabled):active {
+    transform: translateY(2px);
+  }
+
+  .arcade-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  @media (max-width: 600px) {
+    .bj-side {
+      display: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-text,
+    .message.blink {
+      animation: none;
+    }
+  }
+</style>
+
+<!--
+  Cards are created at runtime with document.createElement, so they never get
+  Astro's scoped data-astro-cid attribute. These rules must be global, but they
+  are namespaced under #bj-game so nothing leaks to the rest of the page.
+-->
+<style is:global>
+  #bj-game .pcard {
+    width: clamp(40px, 7.2vw, 56px);
+    aspect-ratio: 5 / 7;
+    border-radius: 7px;
+    background: linear-gradient(160deg, #f6eed6 0%, #ddcca4 100%);
+    color: #2a1c10;
+    border: 2px solid #f6eed6;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.45),
+      0 0 12px rgba(255, 255, 255, 0.2);
+    position: relative;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    will-change: transform, opacity;
+  }
+
+  #bj-game .pcard.flipping {
+    animation: bj-card-flip 0.34s ease;
+  }
+
+  #bj-game .pcard.red { color: #d6204a; }
+
+  #bj-game .pcard .corner {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 0.95;
+  }
+
+  #bj-game .pcard .corner.tl {
+    top: clamp(5px, 1vw, 8px);
+    left: clamp(6px, 1.1vw, 9px);
+  }
+
+  #bj-game .pcard .corner.br {
+    bottom: clamp(5px, 1vw, 8px);
+    right: clamp(6px, 1.1vw, 9px);
+    transform: rotate(180deg);
+  }
+
+  #bj-game .pcard .corner .r {
+    font-size: clamp(0.6rem, 1.5vw, 0.85rem);
+    font-weight: 700;
+  }
+
+  #bj-game .pcard .corner .s {
+    font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+  }
+
+  #bj-game .pcard .pip {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(1.4rem, 3.6vw, 2rem);
+    opacity: 0.92;
+  }
+
+  #bj-game .pcard.back {
+    background: repeating-linear-gradient(45deg, #7a2b22 0 8px, #9e3a2c 8px 16px);
+    border-color: #c8902f;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.45),
+      0 0 14px rgba(200, 144, 47, 0.5);
+  }
+
+  #bj-game .pcard.back::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 2px solid rgba(241, 199, 90, 0.65);
+    border-radius: 5px;
+  }
+
+  @keyframes bj-card-flip {
+    0% { transform: scaleX(1); }
+    50% { transform: scaleX(0); }
+    100% { transform: scaleX(1); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #bj-game .pcard.flipping {
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  type Suit = '♠' | '♥' | '♦' | '♣';
+  interface Card {
+    rank: string;
+    suit: Suit;
+    value: number;
+  }
+
+  const RANKS = [
+    { rank: 'A', value: 11 },
+    { rank: '2', value: 2 },
+    { rank: '3', value: 3 },
+    { rank: '4', value: 4 },
+    { rank: '5', value: 5 },
+    { rank: '6', value: 6 },
+    { rank: '7', value: 7 },
+    { rank: '8', value: 8 },
+    { rank: '9', value: 9 },
+    { rank: '10', value: 10 },
+    { rank: 'J', value: 10 },
+    { rank: 'Q', value: 10 },
+    { rank: 'K', value: 10 },
+  ];
+  const SUITS: Suit[] = ['♠', '♥', '♦', '♣'];
+
+  function setup(root: HTMLElement) {
+    const START_CREDITS = 100;
+    const MIN_BET = 5;
+    const MAX_BET = 50;
+    const BET_STEP = 5;
+
+    const dealerCardsEl = root.querySelector('[data-dealer-cards]') as HTMLElement;
+    const playerCardsEl = root.querySelector('[data-player-cards]') as HTMLElement;
+    const dealerScoreEl = root.querySelector('[data-dealer-score]') as HTMLElement;
+    const playerScoreEl = root.querySelector('[data-player-score]') as HTMLElement;
+    const messageEl = root.querySelector('[data-message]') as HTMLElement;
+    const creditsEl = root.querySelector('[data-credits]') as HTMLElement;
+    const betEl = root.querySelector('[data-bet]') as HTMLElement;
+
+    const dealBtn = root.querySelector('[data-action="deal"]') as HTMLButtonElement;
+    const hitBtn = root.querySelector('[data-action="hit"]') as HTMLButtonElement;
+    const standBtn = root.querySelector('[data-action="stand"]') as HTMLButtonElement;
+    const doubleBtn = root.querySelector('[data-action="double"]') as HTMLButtonElement;
+    const betDownBtn = root.querySelector('[data-action="bet-down"]') as HTMLButtonElement;
+    const betUpBtn = root.querySelector('[data-action="bet-up"]') as HTMLButtonElement;
+    const tableEl = root.querySelector('.table') as HTMLElement;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const STEP = reduceMotion ? 0 : 240; // pause between sequential deals
+    const FLY = reduceMotion ? 0 : 340; // card travel time
+    const DEALER_STEP = reduceMotion ? 0 : 420; // pause between dealer draws
+
+    const wait = (ms: number) => new Promise<void>((res) => setTimeout(res, ms));
+
+    let deck: Card[] = [];
+    let player: Card[] = [];
+    let dealer: Card[] = [];
+    let credits = START_CREDITS;
+    let bet = 10; // the stake the player selects between hands
+    let wager = bet; // the actual amount on the table (doubles on double-down)
+    let inRound = false;
+    let busy = false; // locks input while cards animate
+
+    function newDeck(): Card[] {
+      const d: Card[] = [];
+      for (const suit of SUITS) {
+        for (const r of RANKS) {
+          d.push({ rank: r.rank, suit, value: r.value });
+        }
+      }
+      for (let i = d.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [d[i], d[j]] = [d[j], d[i]];
+      }
+      return d;
+    }
+
+    function draw(): Card {
+      if (deck.length === 0) deck = newDeck();
+      return deck.pop() as Card;
+    }
+
+    function handValue(hand: Card[]): number {
+      let total = 0;
+      let aces = 0;
+      for (const c of hand) {
+        total += c.value;
+        if (c.rank === 'A') aces++;
+      }
+      while (total > 21 && aces > 0) {
+        total -= 10;
+        aces--;
+      }
+      return total;
+    }
+
+    function paintFace(el: HTMLElement, card: Card) {
+      el.classList.remove('back');
+      el.classList.toggle('red', card.suit === '♥' || card.suit === '♦');
+      const corner = `<span class="r">${card.rank}</span><span class="s">${card.suit}</span>`;
+      el.innerHTML =
+        `<span class="corner tl">${corner}</span>` +
+        `<span class="pip">${card.suit}</span>` +
+        `<span class="corner br">${corner}</span>`;
+    }
+
+    function frontEl(card: Card): HTMLElement {
+      const el = document.createElement('div');
+      el.className = 'pcard';
+      paintFace(el, card);
+      return el;
+    }
+
+    function backEl(): HTMLElement {
+      const el = document.createElement('div');
+      el.className = 'pcard back';
+      return el;
+    }
+
+    // FLIP-style animation: card flies in from the top-right corner of the table.
+    function flyIn(el: HTMLElement) {
+      if (reduceMotion) return;
+      const to = el.getBoundingClientRect();
+      const table = tableEl.getBoundingClientRect();
+      const dx = table.right - to.width - to.left;
+      const dy = table.top - to.top;
+      el.style.transform = `translate(${dx}px, ${dy}px) rotate(10deg) scale(0.7)`;
+      el.style.opacity = '0';
+      void el.offsetWidth; // force reflow so the start state is committed
+      el.style.transition = 'transform 0.34s cubic-bezier(0.18, 0.74, 0.25, 1), opacity 0.18s ease';
+      el.style.transform = 'translate(0, 0) rotate(0) scale(1)';
+      el.style.opacity = '1';
+      el.addEventListener(
+        'transitionend',
+        () => {
+          el.style.transition = '';
+          el.style.transform = '';
+        },
+        { once: true }
+      );
+    }
+
+    function dealTo(target: HTMLElement, el: HTMLElement) {
+      target.appendChild(el);
+      flyIn(el);
+    }
+
+    function flipHole(el: HTMLElement, card: Card): Promise<void> {
+      if (reduceMotion) {
+        paintFace(el, card);
+        return Promise.resolve();
+      }
+      el.classList.add('flipping');
+      return new Promise<void>((res) => {
+        setTimeout(() => paintFace(el, card), 170); // swap at the midpoint
+        setTimeout(() => {
+          el.classList.remove('flipping');
+          res();
+        }, 340);
+      });
+    }
+
+    function showPlayerScore() {
+      playerScoreEl.textContent = `(${handValue(player)})`;
+    }
+
+    function showDealerScore(reveal: boolean) {
+      dealerScoreEl.textContent = reveal ? `(${handValue(dealer)})` : '(?)';
+    }
+
+    function updateHud() {
+      creditsEl.textContent = String(credits);
+      betEl.textContent = String(inRound ? wager : bet);
+    }
+
+    function maxBet() {
+      return Math.min(MAX_BET, Math.max(MIN_BET, credits));
+    }
+
+    function refreshBetButtons() {
+      const adjustable = !inRound && !busy;
+      betDownBtn.disabled = !adjustable || bet <= MIN_BET;
+      betUpBtn.disabled = !adjustable || bet >= maxBet();
+    }
+
+    function changeBet(delta: number) {
+      if (inRound || busy) return;
+      bet = Math.min(maxBet(), Math.max(MIN_BET, bet + delta));
+      updateHud();
+      refreshBetButtons();
+    }
+
+    function setMessage(text: string, kind: '' | 'win' | 'lose' = '', blink = false) {
+      messageEl.textContent = text;
+      messageEl.className = `message ${kind} ${blink ? 'blink' : ''}`.trim();
+    }
+
+    function setControls(state: 'idle' | 'playing' | 'dealing') {
+      if (state === 'dealing') {
+        dealBtn.disabled = true;
+        hitBtn.disabled = true;
+        standBtn.disabled = true;
+        doubleBtn.disabled = true;
+        refreshBetButtons();
+        return;
+      }
+      const playing = state === 'playing';
+      hitBtn.disabled = !playing;
+      standBtn.disabled = !playing;
+      // Double down is only allowed on the opening two cards, with funds to match the bet.
+      doubleBtn.disabled = !(playing && player.length === 2 && credits >= wager);
+      dealBtn.disabled = playing;
+      dealBtn.textContent = !playing && credits < MIN_BET ? 'RESET' : 'DEAL';
+      if (!playing) {
+        if (bet > maxBet()) bet = maxBet();
+        updateHud();
+      }
+      refreshBetButtons();
+    }
+
+    async function revealHole() {
+      const holeCard = dealerCardsEl.children[1] as HTMLElement | undefined;
+      if (holeCard && holeCard.classList.contains('back')) {
+        await flipHole(holeCard, dealer[1]);
+      }
+      showDealerScore(true);
+    }
+
+    function finish(text: string, kind: '' | 'win' | 'lose', payout: number) {
+      credits += payout;
+      inRound = false;
+      busy = false;
+      showDealerScore(true);
+      updateHud();
+      setMessage(text, kind);
+      setControls('idle');
+    }
+
+    async function dealerTurn() {
+      busy = true;
+      setControls('dealing');
+      setMessage('THE HOUSE DRAWS...');
+      await revealHole();
+      await wait(STEP);
+
+      while (handValue(dealer) < 17) {
+        const c = draw();
+        dealer.push(c);
+        dealTo(dealerCardsEl, frontEl(c));
+        await wait(FLY);
+        showDealerScore(true);
+        await wait(DEALER_STEP);
+      }
+
+      const pv = handValue(player);
+      const dv = handValue(dealer);
+      if (dv > 21) finish('THE HOUSE BUSTS — YEE-HAW!', 'win', wager * 2);
+      else if (dv > pv) finish('THE HOUSE TAKES IT', 'lose', 0);
+      else if (dv < pv) finish('YOU WIN, PARTNER!', 'win', wager * 2);
+      else finish('STANDOFF — BET RETURNED', '', wager);
+    }
+
+    async function deal() {
+      if (busy) return;
+
+      if (credits < MIN_BET) {
+        credits = START_CREDITS;
+        inRound = false;
+        updateHud();
+        setMessage('GOLD REFILLED — ANTE UP');
+        setControls('idle');
+        return;
+      }
+
+      busy = true;
+      if (bet > credits) bet = credits;
+      credits -= bet;
+      wager = bet;
+      inRound = true;
+      deck = newDeck();
+      player = [draw(), draw()];
+      dealer = [draw(), draw()];
+
+      playerCardsEl.innerHTML = '';
+      dealerCardsEl.innerHTML = '';
+      playerScoreEl.textContent = '';
+      showDealerScore(false);
+      updateHud();
+      setMessage("DEALIN'...");
+      setControls('dealing');
+
+      // Deal in real order: player, dealer up, player, dealer hole.
+      dealTo(playerCardsEl, frontEl(player[0]));
+      await wait(STEP);
+      dealTo(dealerCardsEl, frontEl(dealer[0]));
+      await wait(STEP);
+      dealTo(playerCardsEl, frontEl(player[1]));
+      showPlayerScore();
+      await wait(STEP);
+      dealTo(dealerCardsEl, backEl());
+      await wait(FLY);
+
+      if (handValue(player) === 21) {
+        await revealHole();
+        if (handValue(dealer) === 21) finish('STANDOFF — BOTH 21', '', wager);
+        else finish('BLACKJACK! +' + Math.floor(wager * 1.5) + ' GOLD', 'win', Math.floor(wager * 2.5));
+        return;
+      }
+
+      busy = false;
+      setControls('playing');
+      setMessage('HIT OR STAND, PARTNER?');
+    }
+
+    async function hit() {
+      if (!inRound || busy) return;
+      busy = true;
+      setControls('dealing');
+      const c = draw();
+      player.push(c);
+      dealTo(playerCardsEl, frontEl(c));
+      await wait(FLY);
+      showPlayerScore();
+
+      const v = handValue(player);
+      if (v > 21) {
+        await revealHole();
+        finish('BUST! YA WENT OVER', 'lose', 0);
+      } else if (v === 21) {
+        await dealerTurn();
+      } else {
+        busy = false;
+        setControls('playing');
+        setMessage('HIT OR STAND, PARTNER?');
+      }
+    }
+
+    async function stand() {
+      if (!inRound || busy) return;
+      await dealerTurn();
+    }
+
+    // Double down: match the bet, take exactly one more card, then stand.
+    async function double() {
+      if (!inRound || busy) return;
+      if (player.length !== 2 || credits < wager) return;
+      busy = true;
+      setControls('dealing');
+      credits -= bet;
+      wager = bet * 2;
+      updateHud();
+      setMessage('DOUBLE DOWN — ONE CARD');
+
+      const c = draw();
+      player.push(c);
+      dealTo(playerCardsEl, frontEl(c));
+      await wait(FLY);
+      showPlayerScore();
+
+      if (handValue(player) > 21) {
+        await revealHole();
+        finish('BUST! YA WENT OVER', 'lose', 0);
+      } else {
+        await dealerTurn();
+      }
+    }
+
+    dealBtn.addEventListener('click', deal);
+    hitBtn.addEventListener('click', hit);
+    standBtn.addEventListener('click', stand);
+    doubleBtn.addEventListener('click', double);
+    betDownBtn.addEventListener('click', () => changeBet(-BET_STEP));
+    betUpBtn.addEventListener('click', () => changeBet(BET_STEP));
+
+    updateHud();
+    showDealerScore(false);
+    setMessage('ANTE UP, PARTNER');
+    setControls('idle');
+  }
+
+  const root = document.getElementById('bj-game');
+  if (root) setup(root);
+</script>

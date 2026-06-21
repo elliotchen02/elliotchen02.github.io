@@ -1,0 +1,45 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+
+const projects = (await getCollection('projects')).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<BaseLayout title="Projects" description="Projects Elliot Chen has worked on across machine learning, computer architecture, and software.">
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Portfolio</p>
+      <h1>Projects</h1>
+      <p class="lead">Here are some projects I've worked on in the past.</p>
+
+      <div class="card-grid">
+        {
+          projects.map((project) => (
+            <ProjectCard
+              id={project.id}
+              title={project.data.title}
+              date={project.data.date}
+              description={project.data.description}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  h1 {
+    margin-top: 0.4rem;
+  }
+
+  .lead {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    margin-block: 0.75rem 2.5rem;
+    max-width: var(--reading-width);
+  }
+</style>

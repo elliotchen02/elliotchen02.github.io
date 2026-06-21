@@ -1,0 +1,44 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  date: Date;
+  description: string;
+}
+
+const { id, title, date, description } = Astro.props;
+---
+
+<a href={`/projects/${id}/`} class="card project-card">
+  <FormattedDate date={date} />
+  <h3 class="project-title">{title}</h3>
+  <p class="project-desc">{description}</p>
+  <span class="project-cta">Read more &rarr;</span>
+</a>
+
+<style>
+  .project-card {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .project-title {
+    font-size: 1.15rem;
+    color: #fff;
+  }
+
+  .project-desc {
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    flex: 1;
+  }
+
+  .project-cta {
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+</style>
