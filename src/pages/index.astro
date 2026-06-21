@@ -8,7 +8,7 @@ import { SITE } from '../consts';
 <BaseLayout>
   <ParticlesHero />
 
-  <section class="section">
+  <section class="section about-section">
     <div class="container about">
       <p class="eyebrow">About</p>
       <p class="about-text">
@@ -43,8 +43,16 @@ import { SITE } from '../consts';
 </BaseLayout>
 
 <style>
+  .about-section {
+    padding-block: clamp(2rem, 5vw, 3rem);
+  }
+
   .about {
     max-width: var(--reading-width);
+  }
+
+  .about .eyebrow {
+    margin-bottom: 0.75rem;
   }
 
   .about h2 {
@@ -63,18 +71,15 @@ import { SITE } from '../consts';
 
   .arcade {
     border-top: 1px solid var(--border);
+    padding-top: clamp(1.25rem, 3vw, 2rem);
+    padding-bottom: clamp(3rem, 8vw, 5rem);
   }
 
   .arcade-head {
     margin-bottom: 2rem;
   }
 
-  .arcade-head h2 {
-    margin-top: 0.4rem;
-  }
-
   .arcade-sub {
-    margin-top: 0.6rem;
     color: var(--text-muted);
     max-width: var(--reading-width);
   }
