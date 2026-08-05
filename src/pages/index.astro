@@ -1,7 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ParticlesHero from '../components/ParticlesHero.astro';
-import BlackjackGame from '../components/BlackjackGame.astro';
 import { SITE } from '../consts';
 ---
 
@@ -14,7 +13,7 @@ import { SITE } from '../consts';
       <p class="about-text">
         I'm currently living in San Francisco and working as a software engineer at Applied Intuition. 
         I focus on cloud infrastructure, and I'm helping build Applied's
-        flagship autonomy tools for the governemnt.  
+        flagship autonomy tools for the government.  
         I graduated from MIT with a B.S. in computer science and engineering. 
       </p>
       <p class="about-text">
@@ -26,18 +25,6 @@ import { SITE } from '../consts';
         If you'd like to contact me, I'm most reachable by email at
         <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
       </p>
-    </div>
-  </section>
-
-  <section class="section arcade">
-    <div class="container">
-      <div class="arcade-head">
-        <p class="arcade-sub">
-          I like games. And (occasionally) gambling. Get a dopamine hit while you're here.
-        </p>
-      </div>
-
-      <BlackjackGame />
     </div>
   </section>
 </BaseLayout>
@@ -67,20 +54,5 @@ import { SITE } from '../consts';
   .about-text {
     color: var(--text-muted);
     font-size: 1.05rem;
-  }
-
-  .arcade {
-    border-top: 1px solid var(--border);
-    padding-top: clamp(1.25rem, 3vw, 2rem);
-    padding-bottom: clamp(3rem, 8vw, 5rem);
-  }
-
-  .arcade-head {
-    margin-bottom: 2rem;
-  }
-
-  .arcade-sub {
-    color: var(--text-muted);
-    max-width: var(--reading-width);
   }
 </style>

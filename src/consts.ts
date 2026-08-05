@@ -9,6 +9,6 @@ export const SITE = {
 
 export const NAV_LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/projects/', label: 'Projects' },
+  { href: '/random/', label: 'Random' },
   { href: SITE.cv, label: 'CV', external: true },
 ];
