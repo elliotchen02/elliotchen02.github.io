@@ -1,41 +1,168 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Hero from '../components/Hero.astro';
+import BlackjackGame from '../components/BlackjackGame.astro';
 import { SITE } from '../consts';
 ---
 
-<BaseLayout>
+<BaseLayout showHeader={false}>
   <Hero />
 
-  <section class="section about-section">
-    <div class="container about">
-      <p class="about-text">
-        I'm currently living in San Francisco and working as a software engineer at Applied Intuition. 
-        I focus on cloud infrastructure, and I'm helping build Applied's
-        flagship autonomy tools for the government.  
-        I graduated from MIT with a B.S. in computer science and engineering. 
-      </p>
-      <p class="about-text">
-        In my free time, I enjoy swimming, lifting, hiking, playing poker, and a good movie. 
-        I try to keep the creative side of my brain in shape too - you might find me playing the piano,
-        writing short stories in the coffee shops around FiDi, or doing a little game development.
-      </p>
-      <p class="about-text">
-        If you'd like to contact me, I'm most reachable by email at
-        <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
-      </p>
+  <section class="tab-section">
+    <div class="container">
+      <div class="tab-strip" role="tablist" aria-label="Sections">
+        <button class="tab is-active" role="tab" aria-selected="true" data-tab="about" id="tab-about">
+          About
+        </button>
+        <button class="tab" role="tab" aria-selected="false" data-tab="playground" id="tab-playground">
+          Playground
+        </button>
+        <a
+          class="tab tab-link"
+          href={SITE.cv}
+          target="_blank"
+          rel="noopener"
+          aria-label="CV (opens in a new tab)"
+        >
+          CV
+          <svg class="tab-link-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17 17 7"></path>
+            <path d="M8 7h9v9"></path>
+          </svg>
+        </a>
+      </div>
+
+      <div class="tab-panels">
+        <section class="panel is-active" role="tabpanel" aria-labelledby="tab-about" data-panel="about">
+          <div class="about">
+            <p class="about-text">
+              I'm currently living in San Francisco and working as a software engineer at Applied Intuition.
+              I focus on cloud infrastructure, and I'm helping build Applied's
+              flagship autonomy tools for the government.
+              I graduated from MIT with a B.S. in computer science and engineering.
+            </p>
+            <p class="about-text">
+              In my free time, I enjoy swimming, lifting, hiking, playing poker, and a good movie.
+              I try to keep the creative side of my brain in shape too - you might find me playing the piano,
+              writing short stories in the coffee shops around FiDi, or doing a little game development.
+            </p>
+            <p class="about-text">
+              If you'd like to contact me, I'm most reachable by email at
+              <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+            </p>
+          </div>
+        </section>
+
+        <section class="panel" role="tabpanel" aria-labelledby="tab-playground" data-panel="playground" hidden>
+          <p class="panel-sub">
+            A random collection of stuff. Get a dopamine hit while you're here.
+          </p>
+          <BlackjackGame />
+        </section>
+      </div>
     </div>
   </section>
 </BaseLayout>
 
+<script>
+  const tabs = document.querySelectorAll<HTMLButtonElement>('[data-tab]');
+  const panels = document.querySelectorAll<HTMLElement>('[data-panel]');
+
+  tabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab;
+      tabs.forEach((t) => {
+        const active = t === tab;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
+      });
+      panels.forEach((p) => {
+        const active = p.dataset.panel === target;
+        p.classList.toggle('is-active', active);
+        if (active) {
+          p.removeAttribute('hidden');
+        } else {
+          p.setAttribute('hidden', '');
+        }
+      });
+    });
+  });
+</script>
+
 <style>
-  .about-section {
-    padding-block: clamp(2rem, 5vw, 3rem);
+  .tab-section {
+    padding-top: clamp(1rem, 3vw, 2rem);
+    padding-bottom: clamp(3rem, 7vw, 5rem);
+  }
+
+  .tab-strip {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0;
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .tab {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0;
+    background: transparent;
+    font-family: inherit;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--text-faint);
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .tab + .tab {
+    border-left: none;
+  }
+
+  .tab:hover {
+    color: var(--text-muted);
+    border-color: var(--border-hover);
+    background: var(--surface);
+  }
+
+  .tab.is-active {
+    color: var(--text-muted);
+    border-color: var(--border-hover);
+    background: var(--surface);
+  }
+
+  .tab-link {
+    text-decoration: none;
+  }
+
+  .tab-link-icon {
+    opacity: 0.6;
+  }
+
+  .tab-panels {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+
+  .panel {
+    padding-top: clamp(2rem, 5vw, 3rem);
+    display: none;
+  }
+
+  .panel.is-active {
+    display: block;
   }
 
   .about {
     max-width: var(--reading-width);
-    margin-inline: 0;
   }
 
   .about-text + .about-text {
@@ -45,5 +172,11 @@ import { SITE } from '../consts';
   .about-text {
     color: var(--text);
     font-size: 1.05rem;
+  }
+
+  .panel-sub {
+    color: var(--text-muted);
+    max-width: var(--reading-width);
+    margin-bottom: 1.5rem;
   }
 </style>

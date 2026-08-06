@@ -7,9 +7,10 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  showHeader?: boolean;
 }
 
-const { title, description = SITE.tagline } = Astro.props;
+const { title, description = SITE.tagline, showHeader = true } = Astro.props;
 const pageTitle = title ? `${title} - ${SITE.name}` : SITE.title;
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
 ---
@@ -39,7 +40,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site).href;
     <link rel="sitemap" href="/sitemap-index.xml" />
   </head>
   <body>
-    <Header />
+    {showHeader && <Header />}
     <main>
       <slot />
     </main>
