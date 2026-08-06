@@ -3,12 +3,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import BlackjackGame from '../components/BlackjackGame.astro';
 ---
 
-<BaseLayout title="Random">
-  <section class="section arcade">
+<BaseLayout title="Playground">
+  <section class="section playground">
     <div class="container">
-      <div class="arcade-head">
-        <p class="arcade-sub">
-          I like games. And (occasionally) gambling. Get a dopamine hit while you're here.
+      <div class="playground-head">
+        <p class="playground-sub">
+          A random collection of stuff. Get a dopamine hit while you're here.
         </p>
       </div>
 
@@ -18,17 +18,17 @@ import BlackjackGame from '../components/BlackjackGame.astro';
 </BaseLayout>
 
 <style>
-  .arcade {
+  .playground {
     border-top: 1px solid var(--border);
     padding-top: clamp(1.25rem, 3vw, 2rem);
     padding-bottom: clamp(3rem, 8vw, 5rem);
   }
 
-  .arcade-head {
+  .playground-head {
     margin-bottom: 2rem;
   }
 
-  .arcade-sub {
+  .playground-sub {
     color: var(--text-muted);
     max-width: var(--reading-width);
   }

@@ -1,15 +1,15 @@
 :root {
-  --bg: #0a0a0a;
-  --surface: #111214;
-  --surface-2: #161719;
-  --border: #262729;
-  --border-hover: #3a3c3f;
-  --text: #ededed;
-  --text-muted: #a1a1aa;
-  --text-faint: #71717a;
-  --accent: #22d3ee;
-  --accent-strong: #06b6d4;
-  --accent-dim: rgba(34, 211, 238, 0.12);
+  --bg: #0f1115;
+  --surface: #161a20;
+  --surface-2: #1c2128;
+  --border: #2a2f37;
+  --border-hover: #3a414b;
+  --text: #e6e9ee;
+  --text-muted: #9aa3af;
+  --text-faint: #6b7280;
+  --accent: #7c93a8;
+  --accent-strong: #93a8bc;
+  --accent-dim: rgba(124, 147, 168, 0.14);
   --max-width: 1100px;
   --reading-width: 720px;
   --radius: 12px;
@@ -54,7 +54,7 @@ a {
 }
 
 a:hover {
-  color: #67e8f9;
+  color: var(--accent-strong);
 }
 
 img {
@@ -126,7 +126,7 @@ pre code {
   letter-spacing: 0.18em;
   font-size: 0.75rem;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-faint);
 }
 
 /* Buttons */
@@ -149,20 +149,19 @@ pre code {
   border-color: var(--border-hover);
   background: var(--surface-2);
   color: #fff;
-  transform: translateY(-1px);
 }
 
 .btn-primary {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: #05161a;
+  background: var(--accent-dim);
+  border-color: var(--border-hover);
+  color: var(--text);
   font-weight: 600;
 }
 
 .btn-primary:hover {
-  background: #67e8f9;
-  border-color: #67e8f9;
-  color: #05161a;
+  background: var(--surface-2);
+  border-color: var(--accent);
+  color: #fff;
 }
 
 /* Cards */
@@ -179,9 +178,8 @@ pre code {
 }
 
 .card:hover {
-  border-color: var(--accent);
+  border-color: var(--border-hover);
   background: var(--surface-2);
-  transform: translateY(-3px);
 }
 
 .card-grid {

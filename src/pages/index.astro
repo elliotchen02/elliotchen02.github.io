@@ -1,15 +1,14 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ParticlesHero from '../components/ParticlesHero.astro';
+import Hero from '../components/Hero.astro';
 import { SITE } from '../consts';
 ---
 
 <BaseLayout>
-  <ParticlesHero />
+  <Hero />
 
   <section class="section about-section">
     <div class="container about">
-      <p class="eyebrow">About</p>
       <p class="about-text">
         I'm currently living in San Francisco and working as a software engineer at Applied Intuition. 
         I focus on cloud infrastructure, and I'm helping build Applied's
@@ -36,23 +35,15 @@ import { SITE } from '../consts';
 
   .about {
     max-width: var(--reading-width);
-  }
-
-  .about .eyebrow {
-    margin-bottom: 0.75rem;
-  }
-
-  .about h2 {
-    margin-top: 0.5rem;
-    margin-bottom: 1.25rem;
+    margin-inline: 0;
   }
 
   .about-text + .about-text {
-    margin-top: 1rem;
+    margin-top: 1.25rem;
   }
 
   .about-text {
-    color: var(--text-muted);
+    color: var(--text);
     font-size: 1.05rem;
   }
 </style>
